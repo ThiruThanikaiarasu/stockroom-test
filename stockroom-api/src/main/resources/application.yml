@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: stockroom
+  datasource:
+    url: jdbc:h2:file:./data/stockroom;AUTO_SERVER=TRUE
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+stockroom:
+  reservations:
+    ttl: PT30M
+    sweep-interval: PT1M
+  alerts:
+    enabled: true

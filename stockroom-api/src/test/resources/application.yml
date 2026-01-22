@@ -1,0 +1,25 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  main:
+    banner-mode: off
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+stockroom:
+  reservations:
+    ttl: PT30M
+    sweep-enabled: false
+
+logging:
+  level:
+    root: warn
