@@ -68,6 +68,7 @@ class PurchaseOrderServiceTest {
         PurchaseOrder full = orders.receive(po.getId(), List.of(new ReceiptLine(lineId, bin.getId(), 6, null)));
         assertThat(full.getStatus()).isEqualTo(PurchaseOrderStatus.RECEIVED);
         assertThat(stock.onHand(sku.getId())).isEqualTo(10);
+        assertThat(skus.get(sku.getId()).getAverageCost()).isEqualByComparingTo("2.50");
     }
 
     @Test
@@ -82,6 +83,19 @@ class PurchaseOrderServiceTest {
                 .isInstanceOf(InvalidStateException.class)
                 .hasMessageContaining("only 3 outstanding");
         assertThat(stock.onHand(sku.getId())).isZero();
+    }
+
+    @Test
+    void invoicedCostOverridesOrderedCost() {
+        Sku sku = fixtures.sku(0);
+        Bin bin = fixtures.bin();
+        PurchaseOrder po = orders.create(order(sku, 10, "5.00"));
+        orders.submit(po.getId());
+        Long lineId = po.getLines().get(0).getId();
+
+        orders.receive(po.getId(), List.of(new ReceiptLine(lineId, bin.getId(), 10, new BigDecimal("5.40"))));
+
+        assertThat(skus.get(sku.getId()).getAverageCost()).isEqualByComparingTo("5.40");
     }
 
     @Test

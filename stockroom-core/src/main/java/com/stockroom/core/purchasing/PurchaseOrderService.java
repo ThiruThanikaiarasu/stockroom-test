@@ -1,10 +1,12 @@
 package com.stockroom.core.purchasing;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.stockroom.core.common.NotFoundException;
+import com.stockroom.core.costing.CostingService;
 import com.stockroom.core.sku.Sku;
 import com.stockroom.core.sku.SkuService;
 import com.stockroom.core.stock.StockService;
@@ -18,13 +20,15 @@ public class PurchaseOrderService {
     private final PurchaseOrderRepository orders;
     private final SkuService skus;
     private final StockService stock;
+    private final CostingService costing;
     private final Clock clock;
 
     public PurchaseOrderService(PurchaseOrderRepository orders, SkuService skus, StockService stock,
-                                Clock clock) {
+                                CostingService costing, Clock clock) {
         this.orders = orders;
         this.skus = skus;
         this.stock = stock;
+        this.costing = costing;
         this.clock = clock;
     }
 
@@ -80,8 +84,11 @@ public class PurchaseOrderService {
                     .findFirst()
                     .orElseThrow(() -> new NotFoundException("Purchase order line", received.lineId()));
             Sku sku = line.getSku();
+            BigDecimal cost = received.invoicedUnitCost() != null ? received.invoicedUnitCost() : line.getUnitCost();
+            int onHandBefore = stock.onHand(sku.getId());
             line.receive(received.quantity());
             stock.receive(sku.getId(), received.binId(), received.quantity(), order.getNumber());
+            costing.applyReceipt(sku, onHandBefore, received.quantity(), cost);
         }
         order.refreshStatus();
         return order;

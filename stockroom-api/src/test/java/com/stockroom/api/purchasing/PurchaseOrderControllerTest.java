@@ -33,6 +33,8 @@ class PurchaseOrderControllerTest extends ApiTestSupport {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("RECEIVED"))
                 .andExpect(jsonPath("$.lines[0].received").value(20));
+
+        mvc.perform(get("/api/skus/{id}", sku)).andExpect(jsonPath("$.averageCost").value(3.75));
     }
 
     @Test

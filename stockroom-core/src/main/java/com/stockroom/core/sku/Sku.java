@@ -1,5 +1,6 @@
 package com.stockroom.core.sku;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -40,6 +41,9 @@ public class Sku {
     /** Minimum level; a low-stock alert is raised once available stock drops below it. */
     @Column(name = "reorder_point", nullable = false)
     private int reorderPoint;
+
+    @Column(name = "average_cost", nullable = false, precision = 19, scale = 4)
+    private BigDecimal averageCost = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private boolean active = true;

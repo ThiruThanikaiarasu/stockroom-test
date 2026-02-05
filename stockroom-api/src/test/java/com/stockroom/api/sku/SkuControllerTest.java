@@ -20,6 +20,7 @@ class SkuControllerTest extends ApiTestSupport {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(code.toUpperCase()))
                 .andExpect(jsonPath("$.reorderPoint").value(8))
+                .andExpect(jsonPath("$.averageCost").value(0))
                 .andExpect(jsonPath("$.active").value(true));
     }
 
