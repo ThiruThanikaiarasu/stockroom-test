@@ -26,6 +26,7 @@ public class LowStockMonitor {
     private static final Logger log = LoggerFactory.getLogger(LowStockMonitor.class);
 
     private final DomainEventBus events;
+    private final LowStockPolicy policy;
     private final SkuRepository skus;
     private final StockLevelRepository levels;
     private final LowStockAlertRepository alerts;
@@ -33,10 +34,11 @@ public class LowStockMonitor {
     private final boolean enabled;
     private DomainEventBus.Subscription subscription;
 
-    public LowStockMonitor(DomainEventBus events, SkuRepository skus,
+    public LowStockMonitor(DomainEventBus events, LowStockPolicy policy, SkuRepository skus,
                            StockLevelRepository levels, LowStockAlertRepository alerts, Clock clock,
                            StockroomProperties properties) {
         this.events = events;
+        this.policy = policy;
         this.skus = skus;
         this.levels = levels;
         this.alerts = alerts;
@@ -64,7 +66,7 @@ public class LowStockMonitor {
             return;
         }
         int available = levels.availableForSku(sku.getId());
-        if (sku.getReorderPoint() <= 0 || available >= sku.getReorderPoint()) {
+        if (!policy.isLow(available, sku.getReorderPoint())) {
             return;
         }
         if (alerts.existsBySkuIdAndAcknowledgedFalse(sku.getId())) {
