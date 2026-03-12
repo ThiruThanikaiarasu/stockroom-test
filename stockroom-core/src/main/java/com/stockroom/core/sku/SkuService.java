@@ -52,9 +52,8 @@ public class SkuService {
         if (patch.name() != null) {
             sku.setName(patch.name());
         }
-        if (patch.description() != null) {
-            sku.setDescription(patch.description());
-        }
+        // description is nullable: sending null clears it
+        sku.setDescription(patch.description());
         if (patch.unitOfMeasure() != null) {
             sku.setUnitOfMeasure(patch.unitOfMeasure());
         }

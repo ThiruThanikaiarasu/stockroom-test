@@ -1,5 +1,6 @@
 package com.stockroom.api.sku;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,6 +56,16 @@ class SkuControllerTest extends ApiTestSupport {
                 .andExpect(jsonPath("$.name").value("Renamed"))
                 .andExpect(jsonPath("$.description").value("Now with lid"))
                 .andExpect(jsonPath("$.reorderPoint").value(3));
+    }
+
+    @Test
+    void patchWithNullDescriptionClearsIt() throws Exception {
+        long id = createSku(unique("CLR"), 3);
+
+        mvc.perform(patch("/api/skus/{id}", id).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"description\": null}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.description").value(nullValue()));
     }
 
     @Test
