@@ -44,7 +44,7 @@ public class CostingService {
         }
         BigDecimal current = sku.getAverageCost();
         BigDecimal updated = weightedAverage(current, Math.max(onHandBefore, 0), unitCost, receivedQuantity);
-        if (updated.compareTo(current) != 0) {
+        if (!updated.equals(current)) {
             sku.setAverageCost(updated);
             revaluations.save(new CostRevaluation(sku, current, updated, LocalDateTime.now(clock)));
             events.publish(new CostRevaluedEvent(sku.getId(), current, updated));
@@ -54,6 +54,9 @@ public class CostingService {
 
     static BigDecimal weightedAverage(BigDecimal currentCost, int currentQuantity, BigDecimal unitCost,
                                       int receivedQuantity) {
+        if (currentQuantity == 0) {
+            return unitCost;
+        }
         BigDecimal value = currentCost.multiply(BigDecimal.valueOf(currentQuantity))
                 .add(unitCost.multiply(BigDecimal.valueOf(receivedQuantity)));
         return value.divide(BigDecimal.valueOf((long) currentQuantity + receivedQuantity), COST_SCALE,
