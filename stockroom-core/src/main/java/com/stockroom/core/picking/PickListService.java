@@ -4,7 +4,9 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.stockroom.core.common.InvalidStateException;
@@ -85,4 +87,11 @@ public class PickListService {
     }
 
     /** Number of lines on each pick list, keyed by public id. */
+    public Map<UUID, Integer> lineCounts(Collection<PickList> lists) {
+        Map<UUID, Integer> counts = new HashMap<>();
+        for (PickList list : lists) {
+            counts.put(list.getPublicId(), list.getLines().size());
+        }
+        return counts;
+    }
 }

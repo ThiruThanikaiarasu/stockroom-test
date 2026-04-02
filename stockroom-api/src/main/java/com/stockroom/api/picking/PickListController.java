@@ -2,6 +2,7 @@ package com.stockroom.api.picking;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.stockroom.core.picking.PickList;
@@ -42,6 +43,11 @@ public class PickListController {
     @GetMapping
     public List<PickListResponse> open() {
         return pickLists.open().stream().map(PickListResponse::from).toList();
+    }
+
+    @GetMapping("/summary")
+    public Map<UUID, Integer> summary() {
+        return pickLists.lineCounts(pickLists.open());
     }
 
     @PostMapping("/{publicId}/complete")

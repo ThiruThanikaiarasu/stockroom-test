@@ -26,6 +26,8 @@ class PickListControllerTest extends ApiTestSupport {
                 .andExpect(jsonPath("$.lines.length()").value(1))
                 .andExpect(jsonPath("$.lines[0].binCode").value("F-2"))).path("id").asText();
 
+        mvc.perform(get("/api/pick-lists/summary")).andExpect(jsonPath("$['" + id + "']").value(1));
+
         mvc.perform(post("/api/pick-lists/{id}/complete", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("COMPLETED"))
