@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stockroom-config
+data:
+  TZ: "UTC"
+  STOCKROOM_RESERVATIONS_TTL: "PT30M"
+  STOCKROOM_ALERTS_ENABLED: "true"
+  SPRING_DATASOURCE_URL: "jdbc:h2:file:/app/data/stockroom"
