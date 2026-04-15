@@ -15,12 +15,16 @@ import com.stockroom.core.sku.Sku;
 import com.stockroom.core.sku.SkuService;
 import com.stockroom.core.stock.StockLevel;
 import com.stockroom.core.stock.StockLevelRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class ReservationService {
+
+    private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
 
     private final ReservationRepository reservations;
     private final StockLevelRepository levels;
@@ -90,11 +94,14 @@ public class ReservationService {
 
     /** Expires every active reservation whose expiry time has passed; returns how many expired. */
     public int expireDue() {
-        LocalDateTime now = LocalDateTime.now(clock);
+        LocalDateTime now = LocalDateTime.now();
         List<Reservation> due = reservations.findActiveExpiringBefore(now);
         for (Reservation reservation : due) {
             reservation.expire();
             returnToStock(reservation, "EXPIRED");
+        }
+        if (!due.isEmpty()) {
+            log.info("Expired {} reservation(s)", due.size());
         }
         return due.size();
     }
