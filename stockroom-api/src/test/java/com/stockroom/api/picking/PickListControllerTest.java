@@ -43,4 +43,8 @@ class PickListControllerTest extends ApiTestSupport {
                 """).andExpect(status().isConflict());
     }
 
+    @Test
+    void malformedPickListIdIsABadRequest() throws Exception {
+        mvc.perform(get("/api/pick-lists/{id}", "not-a-uuid")).andExpect(status().isBadRequest());
+    }
 }
