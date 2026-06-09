@@ -95,6 +95,15 @@ class StockServiceTest {
     }
 
     @Test
+    void transferToTheSameBinIsRejected() {
+        Sku sku = fixtures.sku(0);
+        Bin bin = fixtures.stocked(sku, 5);
+
+        assertThatThrownBy(() -> stock.transfer(sku.getId(), bin.getId(), bin.getId(), 1, null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void pickingConsumesReservedStock() {
         Sku sku = fixtures.sku(0);
         Bin bin = fixtures.stocked(sku, 10);

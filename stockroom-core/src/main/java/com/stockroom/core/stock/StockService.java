@@ -61,6 +61,9 @@ public class StockService {
     /** Moves unreserved stock between two bins; writes one movement per bin. */
     public List<StockMovement> transfer(Long skuId, Long fromBinId, Long toBinId, int quantity, String reference) {
         requirePositive(quantity);
+        if (fromBinId.equals(toBinId)) {
+            throw new IllegalArgumentException("source and destination bins must differ");
+        }
         StockLevel from = levelFor(skuId, fromBinId);
         requireAvailable(from, quantity);
         StockLevel to = levelFor(skuId, toBinId);
