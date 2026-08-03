@@ -50,6 +50,11 @@ public class ReservationController {
         return ReservationResponse.from(reservations.release(reference));
     }
 
+    @PostMapping("/{reference}/extend")
+    public ReservationResponse extend(@PathVariable String reference) {
+        return ReservationResponse.from(reservations.extend(reference));
+    }
+
     public record ReserveRequest(@NotBlank String orderRef, @NotNull Long skuId, @Positive int quantity) {
     }
 

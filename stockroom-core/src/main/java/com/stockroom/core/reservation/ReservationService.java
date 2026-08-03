@@ -92,6 +92,12 @@ public class ReservationService {
         return reservation;
     }
 
+    public Reservation extend(String reference) {
+        Reservation reservation = get(reference);
+        reservation.extendTo(LocalDateTime.now(clock).plus(ttl));
+        return reservation;
+    }
+
     /** Expires every active reservation whose expiry time has passed; returns how many expired. */
     public int expireDue() {
         LocalDateTime now = LocalDateTime.now();

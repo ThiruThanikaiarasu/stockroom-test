@@ -123,6 +123,18 @@ class ReservationServiceTest {
     }
 
     @Test
+    void extendingRestartsTheHoldFromNow() {
+        Sku sku = fixtures.sku(0);
+        fixtures.stocked(sku, 4);
+        Reservation reservation = reservations.reserve("ORD-106", sku.getId(), 1);
+
+        clock.advance(Duration.ofMinutes(20));
+        Reservation extended = reservations.extend(reservation.getReference());
+
+        assertThat(extended.getExpiresAt()).isEqualTo(reservation.getCreatedAt().plusMinutes(50));
+    }
+
+    @Test
     void activeReservationsAreListedPerOrder() {
         Sku sku = fixtures.sku(0);
         fixtures.stocked(sku, 9);
